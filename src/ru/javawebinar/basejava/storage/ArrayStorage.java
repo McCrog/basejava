@@ -1,5 +1,6 @@
 package ru.javawebinar.basejava.storage;
 
+import org.apache.commons.lang.ArrayUtils;
 import ru.javawebinar.basejava.model.Resume;
 
 /**
@@ -15,7 +16,7 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        int index = checkingPresenceOfResume(r.getUuid());
+        int index = getIndex(r.getUuid());
         if (index == -1) {
             System.out.println("Резюме " + r.getUuid() + " не найдено.");
         } else {
@@ -24,7 +25,7 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        int index = checkingPresenceOfResume(r.getUuid());
+        int index = getIndex(r.getUuid());
         if (index != -1) {
             System.out.println("Резюме " + r.getUuid() + " присутствует в хранилище.");
         } else if (size == storage.length) {
@@ -36,7 +37,7 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        int index = checkingPresenceOfResume(uuid);
+        int index = getIndex(uuid);
         if (index != -1) {
             System.out.println("Резюме " + uuid + " найдено.");
             return storage[index];
@@ -47,7 +48,7 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        int index = checkingPresenceOfResume(uuid);
+        int index = getIndex(uuid);
         if (index == -1) {
             System.out.println("Резюме " + uuid + " не найдено.");
         } else {
@@ -62,18 +63,14 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     public Resume[] getAll() {
-        Resume[] resumes = new Resume[size];
-
-        System.arraycopy(storage, 0, resumes, 0, size);
-
-        return resumes;
+        return (Resume[]) ArrayUtils.subarray(storage, 0, size);
     }
 
     public int size() {
         return size;
     }
 
-    private int checkingPresenceOfResume(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
