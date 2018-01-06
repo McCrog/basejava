@@ -11,7 +11,9 @@ public class ArrayStorage {
     private int size = 0;
 
     public void clear() {
-        storage = new Resume[10000];
+        for (int i = 0; i < size; i++) {
+            storage[i] = null;
+        }
         size = 0;
     }
 
@@ -25,8 +27,7 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index != -1) {
+        if (getIndex(r.getUuid()) != -1) {
             System.out.println("Резюме " + r.getUuid() + " присутствует в хранилище.");
         } else if (size == storage.length) {
             System.out.println("Хранилище заполнено. Вы можете удалить резюме или полностью очистить хранилище.");
@@ -38,13 +39,12 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
-        if (index != -1) {
-            System.out.println("Резюме " + uuid + " найдено.");
-            return storage[index];
-        } else {
+        if (index == -1) {
             System.out.println("Резюме " + uuid + " не найдено.");
             return null;
         }
+
+        return storage[index];
     }
 
     public void delete(String uuid) {
