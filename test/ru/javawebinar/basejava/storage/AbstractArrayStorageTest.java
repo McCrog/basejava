@@ -41,9 +41,6 @@ public abstract class AbstractArrayStorageTest {
     public void clear() {
         storage.clear();
         Assert.assertEquals(null, storage.get(UUID_1));
-        Assert.assertEquals(null, storage.get(UUID_2));
-        Assert.assertEquals(null, storage.get(UUID_3));
-        Assert.assertEquals(0, storage.size());
     }
 
     @Test
@@ -83,8 +80,8 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void checkStorageOverflow() {
-        int storageLength = ((AbstractArrayStorage) storage).storage.length;
+    public void checkStorageOverflow() throws IllegalAccessException {
+        int storageLength = storage.getClass().getSuperclass().getDeclaredFields()[0].getInt(null);
         Assert.assertEquals(storageLength, 10000);
 
         for (int i = 3; i < storageLength; i++) {
@@ -104,13 +101,13 @@ public abstract class AbstractArrayStorageTest {
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
-        Assert.assertEquals(null, storage.get("dummy"));
+        storage.get("dummy");
     }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
         storage.delete(UUID_3);
-        Assert.assertEquals(null, storage.get(UUID_3));
+        storage.get(UUID_3);
     }
 
     @Test(expected = NotExistStorageException.class)
