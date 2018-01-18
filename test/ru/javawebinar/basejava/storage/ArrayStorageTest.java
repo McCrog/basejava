@@ -23,7 +23,6 @@ public class ArrayStorageTest extends AbstractArrayStorageTest {
     public void checkOrderDeleteFromStorage() {
         storage.delete(UUID_3);
         Resume[] resumes = storage.getAll();
-        String uuid = resumes[0].getUuid();
-        Assert.assertEquals(uuid, UUID_2);
+        Assert.assertEquals(RESUME_2, resumes[0]);
     }
 }
