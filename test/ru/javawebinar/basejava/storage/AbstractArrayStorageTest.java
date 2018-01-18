@@ -80,9 +80,9 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void checkStorageOverflow() throws IllegalAccessException {
-        int storageLength = storage.getClass().getSuperclass().getDeclaredFields()[0].getInt(null);
-        Assert.assertEquals(storageLength, 10000);
+    public void checkStorageOverflow() {
+        int storageLength = AbstractArrayStorage.STORAGE_LIMIT;
+        Assert.assertEquals(10000, storageLength);
 
         for (int i = 3; i < storageLength; i++) {
             storage.save(new Resume(UUID_1 + i));
