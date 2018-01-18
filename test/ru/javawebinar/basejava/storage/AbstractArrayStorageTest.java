@@ -37,10 +37,10 @@ public abstract class AbstractArrayStorageTest {
         storage.save(RESUME_2);
     }
 
-    @Test(expected = NotExistStorageException.class)
+    @Test
     public void clear() {
         storage.clear();
-        Assert.assertEquals(null, storage.get(UUID_1));
+        Assert.assertEquals(0, storage.size());
     }
 
     @Test
