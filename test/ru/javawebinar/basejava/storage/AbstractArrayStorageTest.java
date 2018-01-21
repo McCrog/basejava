@@ -15,12 +15,18 @@ public abstract class AbstractArrayStorageTest {
     protected static final String UUID_1 = "uuid1";
     protected static final String UUID_2 = "uuid2";
     protected static final String UUID_3 = "uuid3";
-    protected static final Resume RESUME_1 = new Resume(UUID_1);
-    protected static final Resume RESUME_2 = new Resume(UUID_2);
-    protected static final Resume RESUME_3 = new Resume(UUID_3);
+    protected static final Resume RESUME_1;
+    protected static final Resume RESUME_2;
+    protected static final Resume RESUME_3;
 
-    protected String[] unsortedUuidArray = {UUID_3, UUID_1, UUID_2};
-    protected String[] sortedUuidArray = {UUID_1, UUID_2, UUID_3};
+    static {
+        RESUME_1 = new Resume(UUID_1);
+        RESUME_2 = new Resume(UUID_2);
+        RESUME_3 = new Resume(UUID_3);
+    }
+
+    protected static final String[] unsortedUuidArray = {UUID_3, UUID_1, UUID_2};
+    protected static final String[] sortedUuidArray = {UUID_1, UUID_2, UUID_3};
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
