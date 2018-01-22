@@ -11,29 +11,36 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void update(Resume r) {
-        throw new UnsupportedOperationException();
+        updateResume(r);
     }
 
     public void save(Resume r) {
-        throw new UnsupportedOperationException();
+        saveResume(r);
+        size++;
     }
 
     public Resume get(String uuid) {
-        throw new UnsupportedOperationException();
+        return getResume(uuid);
     }
 
     public void delete(String uuid) {
-        throw new UnsupportedOperationException();
-    }
-
-    public Resume[] getAll() {
-        throw new UnsupportedOperationException();
+        deleteResume(uuid);
+        size--;
     }
 
     public int size() {
         return size;
     }
 
-    protected abstract int getIndex(String uuid);
     protected abstract void clearStorage();
+
+    protected abstract void updateResume(Resume r);
+
+    protected abstract void saveResume(Resume r);
+
+    protected abstract Resume getResume(String uuid);
+
+    protected abstract void deleteResume(String uuid);
+
+    protected abstract int getIndex(String uuid);
 }

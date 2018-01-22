@@ -12,7 +12,7 @@ public class ListStorage extends AbstractStorage {
     private List<Resume> storage = new ArrayList<>();
 
     @Override
-    public void update(Resume r) {
+    protected void updateResume(Resume r) {
         if (!storage.contains(r)) {
             throw new NotExistStorageException(r.getUuid());
         }
@@ -22,17 +22,21 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume r) {
+    protected void clearStorage() {
+        storage.clear();
+    }
+
+    @Override
+    protected void saveResume(Resume r) {
         if (storage.contains(r)) {
             throw new ExistStorageException(r.getUuid());
         }
 
         storage.add(r);
-        size++;
     }
 
     @Override
-    public Resume get(String uuid) {
+    protected Resume getResume(String uuid) {
         Resume resume = new Resume(uuid);
         if (!storage.contains(resume)) {
             throw new NotExistStorageException(uuid);
@@ -42,14 +46,13 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void delete(String uuid) {
+    protected void deleteResume(String uuid) {
         Resume resume = new Resume(uuid);
         if (!storage.contains(resume)) {
             throw new NotExistStorageException(uuid);
         }
 
         storage.remove(getIndex(uuid));
-        size--;
     }
 
     @Override
@@ -60,13 +63,7 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected int getIndex(String uuid) {
         Resume resume = new Resume(uuid);
-        int index = storage.indexOf(resume);
 
-        return index;
-    }
-
-    @Override
-    protected void clearStorage() {
-        storage.clear();
+        return storage.indexOf(resume);
     }
 }

@@ -12,7 +12,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
 
-    public void update(Resume r) {
+    @Override
+    protected void clearStorage() {
+        Arrays.fill(storage, 0, size, null);
+    }
+
+    @Override
+    protected void updateResume(Resume r) {
         int index = getIndex(r.getUuid());
 
         if (index < 0) {
@@ -22,20 +28,21 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    public void save(Resume r) {
+    @Override
+    protected void saveResume(Resume r) {
         int index = getIndex(r.getUuid());
 
         if (index >= 0) {
             throw new ExistStorageException(r.getUuid());
         } else if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
-        } else {
-            saveElement(r, index);
-            size++;
         }
+
+        saveElement(r, index);
     }
 
-    public Resume get(String uuid) {
+    @Override
+    protected Resume getResume(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
             throw new NotExistStorageException(uuid);
@@ -44,28 +51,19 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return storage[index];
     }
 
-    public void delete(String uuid) {
+    @Override
+    protected void deleteResume(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
             throw new NotExistStorageException(uuid);
-        } else {
-            deleteElement(index);
-            storage[size - 1] = null;
-            size--;
         }
-    }
 
-    @Override
-    protected void clearStorage() {
-        Arrays.fill(storage, 0, size, null);
+        deleteElement(index);
+        storage[size - 1] = null;
     }
 
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
-    }
-
-    public int size() {
-        return size;
     }
 
     protected abstract void saveElement(Resume resume, int index);

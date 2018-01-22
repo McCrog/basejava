@@ -12,7 +12,12 @@ public class MapStorage extends AbstractStorage {
     private Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    public void update(Resume r) {
+    protected void clearStorage() {
+        storage.clear();
+    }
+
+    @Override
+    protected void updateResume(Resume r) {
         if (!storage.containsKey(r.getUuid())) {
             throw new NotExistStorageException(r.getUuid());
         }
@@ -22,16 +27,15 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume r) {
+    protected void saveResume(Resume r) {
         if (storage.containsKey(r.getUuid())) {
             throw new ExistStorageException(r.getUuid());
         }
         storage.put(r.getUuid(), r);
-        size++;
     }
 
     @Override
-    public Resume get(String uuid) {
+    protected Resume getResume(String uuid) {
         if (!storage.containsKey(uuid)) {
             throw new NotExistStorageException(uuid);
         }
@@ -39,13 +43,12 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public void delete(String uuid) {
+    protected void deleteResume(String uuid) {
         if (!storage.containsKey(uuid)) {
             throw new NotExistStorageException(uuid);
         }
 
         storage.remove(uuid);
-        size--;
     }
 
     @Override
@@ -57,11 +60,6 @@ public class MapStorage extends AbstractStorage {
             i++;
         }
         return resumes;
-    }
-
-    @Override
-    protected void clearStorage() {
-        storage.clear();
     }
 
     @Override
