@@ -10,29 +10,29 @@ public class MapStorage extends AbstractStorage {
     private Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected void clearStorage() {
+    public void clear() {
         storage.clear();
     }
 
     @Override
-    protected void doUpdate(Resume r) {
+    protected void doUpdate(Resume r, Object searchKey) {
         storage.remove(r.getUuid());
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected void doSave(Resume r) {
+    protected void doSave(Resume r, Object searchKey) {
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected Resume doGet(Resume searchKey) {
-        return storage.get(searchKey.getUuid());
+    protected Resume doGet(Object searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void doDelete(String uuid) {
-        storage.remove(uuid);
+    protected void doDelete(Object searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
@@ -47,20 +47,17 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected int getIndex(String uuid) {
-        int searchIndex = 0;
-
+    protected String getSearchKey(String uuid) {
         for (Map.Entry<String, Resume> entry : storage.entrySet()) {
-            if (entry.getValue().getUuid().equals(uuid)) {
-                break;
+            if (entry.getKey().equals(uuid)) {
+                return entry.getKey();
             }
-            searchIndex++;
         }
-        return searchIndex;
+        return null;
     }
 
     @Override
-    protected boolean checkSearchKeyExist(Resume searchKey) {
-        return storage.containsKey(searchKey.getUuid());
+    protected boolean checkSearchKeyExist(Object searchKey) {
+        return searchKey != null;
     }
 }

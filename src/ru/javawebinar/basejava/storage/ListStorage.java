@@ -4,36 +4,34 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ListStorage extends AbstractStorage {
 
     private List<Resume> storage = new ArrayList<>();
 
     @Override
-    protected void doUpdate(Resume r) {
-        storage.remove(getIndex(r.getUuid()));
-        storage.add(r);
-    }
-
-    @Override
-    protected void clearStorage() {
+    public void clear() {
         storage.clear();
     }
 
     @Override
-    protected void doSave(Resume r) {
+    protected void doUpdate(Resume r, Object searchKey) {
+        storage.set((Integer) searchKey, r);
+    }
+
+    @Override
+    protected void doSave(Resume r, Object searchKey) {
         storage.add(r);
     }
 
     @Override
-    protected Resume doGet(Resume searchKey) {
-        return storage.get(getIndex(searchKey.getUuid()));
+    protected Resume doGet(Object searchKey) {
+        return storage.get((Integer) searchKey);
     }
 
     @Override
-    protected void doDelete(String uuid) {
-        storage.remove(getIndex(uuid));
+    protected void doDelete(Object searchKey) {
+        storage.remove(((Integer) searchKey).intValue());
     }
 
     @Override
@@ -48,20 +46,17 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected int getIndex(String uuid) {
-        int searchIndex = 0;
-
-        for (Resume r : storage) {
-            if (Objects.equals(r.getUuid(), uuid)) {
-                break;
+    protected Integer getSearchKey(String uuid) {
+        for (int i = 0; i < storage.size(); i++) {
+            if (storage.get(i).getUuid().equals(uuid)) {
+                return i;
             }
-            searchIndex++;
         }
-        return searchIndex;
+        return -1;
     }
 
     @Override
-    protected boolean checkSearchKeyExist(Resume searchKey) {
-        return storage.contains(searchKey);
+    protected boolean checkSearchKeyExist(Object searchKey) {
+        return (Integer) searchKey != -1;
     }
 }
