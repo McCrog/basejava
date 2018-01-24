@@ -1,22 +1,17 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ListStorage extends AbstractStorage {
 
     private List<Resume> storage = new ArrayList<>();
 
     @Override
-    protected void updateResume(Resume r) {
-        if (!storage.contains(r)) {
-            throw new NotExistStorageException(r.getUuid());
-        }
-
+    protected void doUpdate(Resume r) {
         storage.remove(getIndex(r.getUuid()));
         storage.add(r);
     }
@@ -27,43 +22,46 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void saveResume(Resume r) {
-        if (storage.contains(r)) {
-            throw new ExistStorageException(r.getUuid());
-        }
-
+    protected void doSave(Resume r) {
         storage.add(r);
     }
 
     @Override
-    protected Resume getResume(String uuid) {
-        Resume resume = new Resume(uuid);
-        if (!storage.contains(resume)) {
-            throw new NotExistStorageException(uuid);
-        }
-
-        return storage.get(getIndex(uuid));
+    protected Resume doGet(Resume searchKey) {
+        return storage.get(getIndex(searchKey.getUuid()));
     }
 
     @Override
-    protected void deleteResume(String uuid) {
-        Resume resume = new Resume(uuid);
-        if (!storage.contains(resume)) {
-            throw new NotExistStorageException(uuid);
-        }
-
+    protected void doDelete(String uuid) {
         storage.remove(getIndex(uuid));
     }
 
     @Override
     public Resume[] getAll() {
-        return storage.toArray(new Resume[size]);
+        int listSize = size();
+        return storage.toArray(new Resume[listSize]);
+    }
+
+    @Override
+    public int size() {
+        return storage.size();
     }
 
     @Override
     protected int getIndex(String uuid) {
-        Resume resume = new Resume(uuid);
+        int searchIndex = 0;
 
-        return storage.indexOf(resume);
+        for (Resume r : storage) {
+            if (Objects.equals(r.getUuid(), uuid)) {
+                break;
+            }
+            searchIndex++;
+        }
+        return searchIndex;
+    }
+
+    @Override
+    protected boolean checkSearchKeyExist(Resume searchKey) {
+        return storage.contains(searchKey);
     }
 }

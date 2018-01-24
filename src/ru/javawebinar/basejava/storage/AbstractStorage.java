@@ -1,46 +1,63 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
-    protected int size = 0;
-
     public void clear() {
         clearStorage();
-        size = 0;
     }
 
     public void update(Resume r) {
-        updateResume(r);
+        checkResumeNotExist(r);
+        doUpdate(r);
     }
 
     public void save(Resume r) {
-        saveResume(r);
-        size++;
+        checkResumeExist(r);
+        doSave(r);
     }
 
     public Resume get(String uuid) {
-        return getResume(uuid);
+        Resume searchKey = getSearchKey(uuid);
+        checkResumeNotExist(searchKey);
+        return doGet(searchKey);
     }
 
     public void delete(String uuid) {
-        deleteResume(uuid);
-        size--;
+        Resume searchKey = getSearchKey(uuid);
+        checkResumeNotExist(searchKey);
+        doDelete(uuid);
     }
 
-    public int size() {
-        return size;
+    private void checkResumeNotExist(Resume r) {
+        if (!checkSearchKeyExist(r)) {
+            throw new NotExistStorageException(r.getUuid());
+        }
+    }
+
+    private void checkResumeExist(Resume r) {
+        if (checkSearchKeyExist(r)) {
+            throw new ExistStorageException(r.getUuid());
+        }
+    }
+
+    private Resume getSearchKey(String uuid) {
+        return new Resume(uuid);
     }
 
     protected abstract void clearStorage();
 
-    protected abstract void updateResume(Resume r);
+    protected abstract void doUpdate(Resume r);
 
-    protected abstract void saveResume(Resume r);
+    protected abstract void doSave(Resume r);
 
-    protected abstract Resume getResume(String uuid);
-
-    protected abstract void deleteResume(String uuid);
+    protected abstract void doDelete(String uuid);
 
     protected abstract int getIndex(String uuid);
+
+    protected abstract boolean checkSearchKeyExist(Resume searchKey);
+
+    protected abstract Resume doGet(Resume searchKey);
 }

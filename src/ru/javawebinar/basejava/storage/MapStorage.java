@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.HashMap;
@@ -17,53 +15,52 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(Resume r) {
-        if (!storage.containsKey(r.getUuid())) {
-            throw new NotExistStorageException(r.getUuid());
-        }
-
+    protected void doUpdate(Resume r) {
         storage.remove(r.getUuid());
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected void saveResume(Resume r) {
-        if (storage.containsKey(r.getUuid())) {
-            throw new ExistStorageException(r.getUuid());
-        }
+    protected void doSave(Resume r) {
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected Resume getResume(String uuid) {
-        if (!storage.containsKey(uuid)) {
-            throw new NotExistStorageException(uuid);
-        }
-        return storage.get(uuid);
+    protected Resume doGet(Resume searchKey) {
+        return storage.get(searchKey.getUuid());
     }
 
     @Override
-    protected void deleteResume(String uuid) {
-        if (!storage.containsKey(uuid)) {
-            throw new NotExistStorageException(uuid);
-        }
-
+    protected void doDelete(String uuid) {
         storage.remove(uuid);
     }
 
     @Override
     public Resume[] getAll() {
-        Resume[] resumes = new Resume[size];
-        int i = 0;
-        for (Map.Entry<String, Resume> entry : storage.entrySet()) {
-            resumes[i] = (entry.getValue());
-            i++;
-        }
-        return resumes;
+        int mapSize = size();
+        return storage.values().toArray(new Resume[mapSize]);
+    }
+
+    @Override
+    public int size() {
+        return storage.size();
     }
 
     @Override
     protected int getIndex(String uuid) {
-        throw new UnsupportedOperationException();
+        int searchIndex = 0;
+
+        for (Map.Entry<String, Resume> entry : storage.entrySet()) {
+            if (entry.getValue().getUuid().equals(uuid)) {
+                break;
+            }
+            searchIndex++;
+        }
+        return searchIndex;
+    }
+
+    @Override
+    protected boolean checkSearchKeyExist(Resume searchKey) {
+        return storage.containsKey(searchKey.getUuid());
     }
 }
