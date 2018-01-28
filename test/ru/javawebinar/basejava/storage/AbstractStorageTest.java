@@ -49,7 +49,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(new Resume(UUID_1));
+        storage.update(new Resume(UUID_1, FULLNAME_1));
         assertGet(RESUME_1);
     }
 
@@ -82,7 +82,7 @@ public abstract class AbstractStorageTest {
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
         assertGet(RESUME_1);
-        storage.save(new Resume(UUID_1));
+        storage.save(new Resume(UUID_1, FULLNAME_1));
     }
 
     @Test
