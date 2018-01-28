@@ -11,17 +11,22 @@ import java.util.List;
 
 public abstract class AbstractStorageTest {
     Storage storage;
-    static final String UUID_1 = "uuid1";
-    static final String UUID_2 = "uuid2";
-    static final String UUID_3 = "uuid3";
-    static final Resume RESUME_1;
-    static final Resume RESUME_2;
-    static final Resume RESUME_3;
+    private static final String UUID_1 = "uuid1";
+    private static final String UUID_2 = "uuid2";
+    private static final String UUID_3 = "uuid3";
+
+    private static final String FULLNAME_1 = "name1";
+    private static final String FULLNAME_2 = "name2";
+    private static final String FULLNAME_3 = "name3";
+
+    private static final Resume RESUME_1;
+    private static final Resume RESUME_2;
+    private static final Resume RESUME_3;
 
     static {
-        RESUME_1 = new Resume(UUID_1, "name1");
-        RESUME_2 = new Resume(UUID_2, "name2");
-        RESUME_3 = new Resume(UUID_3, "name3");
+        RESUME_1 = new Resume(UUID_1, FULLNAME_1);
+        RESUME_2 = new Resume(UUID_2, FULLNAME_2);
+        RESUME_3 = new Resume(UUID_3, FULLNAME_3);
     }
 
     AbstractStorageTest(Storage storage) {
@@ -102,13 +107,6 @@ public abstract class AbstractStorageTest {
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() {
         storage.delete("dummy");
-    }
-
-    @Test
-    public void getAll() {
-        Resume[] resumes = storage.getAll();
-        Assert.assertNotNull(resumes);
-        Assert.assertEquals(3, resumes.length);
     }
 
     @Test

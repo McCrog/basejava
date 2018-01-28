@@ -34,12 +34,6 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        int mapSize = size();
-        return storage.values().toArray(new Resume[mapSize]);
-    }
-
-    @Override
     protected List<Resume> getListStorage() {
         return new ArrayList<>(storage.values());
     }

@@ -9,9 +9,6 @@ import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
 
-    static final String[] unsortedUuidArray = {UUID_3, UUID_1, UUID_2};
-    static final String[] sortedUuidArray = {UUID_1, UUID_2, UUID_3};
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
@@ -25,16 +22,10 @@ public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
         Assert.assertEquals(10000, storageLength);
 
         for (int i = 3; i < storageLength; i++) {
-            storage.save(new Resume(UUID_1 + i));
+            storage.save(new Resume("uuid1" + i));
         }
 
         exception.expect(StorageException.class);
         storage.save(new Resume("uuid0"));
     }
-
-    @Test
-    public abstract void checkOrderSaveToStorage();
-
-    @Test
-    public abstract void checkOrderDeleteFromStorage();
 }
