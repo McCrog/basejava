@@ -47,7 +47,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     @Override
     protected List<Resume> getListStorage() {
-        return Arrays.asList(getAll());
+        return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 
     @Override
@@ -63,8 +63,4 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void saveElement(Resume resume, int index);
 
     protected abstract void deleteElement(int index);
-
-    private Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
-    }
 }
