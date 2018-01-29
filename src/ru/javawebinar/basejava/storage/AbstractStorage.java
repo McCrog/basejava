@@ -6,8 +6,10 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class AbstractStorage<SK> implements Storage {
+    private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
     protected abstract void doUpdate(Resume r, SK searchKey);
 
@@ -24,27 +26,32 @@ public abstract class AbstractStorage<SK> implements Storage {
     protected abstract List<Resume> getListStorage();
 
     public void update(Resume r) {
+        LOG.info("Update " + r);
         SK searchKey = checkResumeNotExist(r.getUuid());
         doUpdate(r, searchKey);
     }
 
     public void save(Resume r) {
+        LOG.info("Save " + r);
         SK searchKey = checkResumeExist(r.getUuid());
         doSave(r, searchKey);
     }
 
     public Resume get(String uuid) {
+        LOG.info("Get " + uuid);
         SK searchKey = checkResumeNotExist(uuid);
         return doGet(searchKey);
     }
 
     public void delete(String uuid) {
+        LOG.info("Delete " + uuid);
         SK searchKey = checkResumeNotExist(uuid);
         doDelete(searchKey);
     }
 
     @Override
     public List<Resume> getAllSorted() {
+        LOG.info("getAllSorted");
         List<Resume> resumeList = getListStorage();
         Collections.sort(resumeList);
         return resumeList;
@@ -54,6 +61,7 @@ public abstract class AbstractStorage<SK> implements Storage {
         SK searchKey = getSearchKey(uuid);
 
         if (!checkSearchKeyExist(searchKey)) {
+            LOG.warning("Resume " + uuid + " not exist");
             throw new NotExistStorageException(uuid);
         }
 
@@ -64,6 +72,7 @@ public abstract class AbstractStorage<SK> implements Storage {
         SK searchKey = getSearchKey(uuid);
 
         if (checkSearchKeyExist(searchKey)) {
+            LOG.warning("Resume " + uuid + " already exist");
             throw new ExistStorageException(uuid);
         }
 
