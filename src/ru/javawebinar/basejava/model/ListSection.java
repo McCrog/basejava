@@ -3,17 +3,11 @@ package ru.javawebinar.basejava.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListSection {
-    private final SectionType sectionType;
+public class ListSection extends Section {
     private final List<String> list;
 
-    public ListSection(SectionType sectionType) {
-        this.sectionType = sectionType;
+    public ListSection() {
         this.list = new ArrayList<>();
-    }
-
-    public SectionType getSectionType() {
-        return sectionType;
     }
 
     public List<String> getList() {
@@ -34,6 +28,6 @@ public class ListSection {
         for (String s : list) {
             result.append(s).append("\n");
         }
-        return sectionType.getTitle() + '(' + result + ')';
+        return result.toString();
     }
 }

@@ -1,16 +1,10 @@
 package ru.javawebinar.basejava.model;
 
-public class TextSection {
-    private final SectionType sectionType;
+public class TextSection extends Section {
     private String text;
 
-    public TextSection(SectionType sectionType) {
-        this.sectionType = sectionType;
+    public TextSection() {
         this.text = null;
-    }
-
-    public SectionType getSectionType() {
-        return sectionType;
     }
 
     public String getText() {
@@ -27,6 +21,6 @@ public class TextSection {
 
     @Override
     public String toString() {
-        return sectionType.getTitle() + '(' + text + ')';
+        return text;
     }
 }
