@@ -3,17 +3,11 @@ package ru.javawebinar.basejava.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockSection {
-    private final SectionType sectionType;
+public class BlockSection extends Section {
     private List<TextBlock> list;
 
-    public BlockSection(SectionType sectionType) {
-        this.sectionType = sectionType;
+    public BlockSection() {
         this.list = new ArrayList<>();
-    }
-
-    public SectionType getSectionType() {
-        return sectionType;
     }
 
     public List<TextBlock> getList() {
@@ -34,6 +28,6 @@ public class BlockSection {
         for (TextBlock s : list) {
             result.append(s).append("\n");
         }
-        return sectionType.getTitle() + '(' + result + ')';
+        return result.toString();
     }
 }
