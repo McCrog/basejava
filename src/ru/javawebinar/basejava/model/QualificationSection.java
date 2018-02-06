@@ -3,29 +3,29 @@ package ru.javawebinar.basejava.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockSection extends Section {
-    private List<TextBlock> list;
+public class QualificationSection extends Section {
+    private List<Qualification> list;
 
-    public BlockSection() {
+    public QualificationSection() {
         this.list = new ArrayList<>();
     }
 
-    public List<TextBlock> getList() {
+    public List<Qualification> getList() {
         return list;
     }
 
     public void addNewItem() {
-        list.add(new TextBlock());
+        list.add(new Qualification());
     }
 
-    public void removeItem(TextBlock textBlock) {
-        list.remove(textBlock);
+    public void removeItem(Qualification qualification) {
+        list.remove(qualification);
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        for (TextBlock s : list) {
+        for (Qualification s : list) {
             result.append(s).append("\n");
         }
         return result.toString();
