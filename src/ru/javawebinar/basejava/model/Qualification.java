@@ -1,13 +1,13 @@
 package ru.javawebinar.basejava.model;
 
-public class TextBlock {
+public class Qualification {
     private String title;
     private String startDate;
     private String endDate;
     private String header;
     private String text;
 
-    public TextBlock() {
+    public Qualification() {
         this.title = null;
         this.startDate = null;
         this.endDate = null;
