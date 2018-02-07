@@ -1,25 +1,18 @@
 package ru.javawebinar.basejava.model;
 
-import java.time.LocalDate;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Organization {
     private final Link homePage;
+    private List<OrganizationPosition> positions = new ArrayList<>();
 
-    private final LocalDate startDate;
-    private final LocalDate endDate;
-    private final String title;
-    private final String description;
-
-    public Organization(String name, String url, LocalDate startDate, LocalDate endDate, String title, String description) {
-        Objects.requireNonNull(startDate, "startDate must not be null");
-        Objects.requireNonNull(endDate, "endDate must not be null");
-        Objects.requireNonNull(title, "title must not be null");
+    public Organization(String name, String url) {
         this.homePage = new Link(name, url);
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.title = title;
-        this.description = description;
+    }
+
+    public List<OrganizationPosition> getPositions() {
+        return positions;
     }
 
     @Override
@@ -29,20 +22,13 @@ public class Organization {
 
         Organization that = (Organization) o;
 
-        if (!homePage.equals(that.homePage)) return false;
-        if (!startDate.equals(that.startDate)) return false;
-        if (!endDate.equals(that.endDate)) return false;
-        return title.equals(that.title) && (description != null ? description.equals(that.description) : that.description == null);
-
+        return homePage.equals(that.homePage) && positions.equals(that.positions);
     }
 
     @Override
     public int hashCode() {
         int result = homePage.hashCode();
-        result = 31 * result + startDate.hashCode();
-        result = 31 * result + endDate.hashCode();
-        result = 31 * result + title.hashCode();
-        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + positions.hashCode();
         return result;
     }
 
@@ -50,10 +36,7 @@ public class Organization {
     public String toString() {
         return "Organization{" +
                 "homePage=" + homePage +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
+                ", positions=" + positions +
                 '}';
     }
 }
