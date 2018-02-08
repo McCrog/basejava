@@ -1,18 +1,23 @@
 package ru.javawebinar.basejava.model;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Organization {
     private final Link homePage;
-    private List<OrganizationPosition> positions = new ArrayList<>();
+    private List<OrganizationPosition> positions;
 
-    public Organization(String name, String url) {
+    public Organization(String name, String url, List<OrganizationPosition> positions) {
         this.homePage = new Link(name, url);
+        this.positions = positions;
     }
 
     public List<OrganizationPosition> getPositions() {
         return positions;
+    }
+
+    public void addPosition(LocalDate startDate, LocalDate endDate, String title, String description) {
+        positions.add(new OrganizationPosition(startDate, endDate, title, description));
     }
 
     @Override
