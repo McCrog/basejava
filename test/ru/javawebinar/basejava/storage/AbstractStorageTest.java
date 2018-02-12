@@ -8,6 +8,7 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.*;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,14 +50,14 @@ public abstract class AbstractStorageTest {
         RESUME_1.addSections(SectionType.EXPERIENCE,
                 new QualificationSection(Arrays.asList(new Qualification(
                         "Java.ru",
-                        LocalDate.ofYearDay(2015, 1),
-                        LocalDate.ofYearDay(2016, 1),
+                        LocalDate.of(2015, Month.APRIL, 1),
+                        LocalDate.of(2016, Month.DECEMBER, 1),
                         "Java",
                         "Проектирование"
                 ), new Qualification(
                         "Java.ru",
-                        LocalDate.ofYearDay(2016, 1),
-                        LocalDate.ofYearDay(2017, 1),
+                        LocalDate.of(2017, Month.JANUARY, 1),
+                        LocalDate.of(2017, Month.DECEMBER, 1),
                         "Java",
                         "Разработка"
                 ))));
@@ -65,14 +66,14 @@ public abstract class AbstractStorageTest {
         RESUME_1.addSections(SectionType.EDUCATION,
                 new QualificationSection(Arrays.asList(new Qualification(
                         "Школа №5",
-                        LocalDate.ofYearDay(2000, 1),
-                        LocalDate.ofYearDay(2010, 1),
+                        LocalDate.of(2000, Month.SEPTEMBER, 1),
+                        LocalDate.of(2010, Month.JUNE, 1),
                         "Ученик",
                         "Отличник"
                 ), new Qualification(
                         "Московский университет",
-                        LocalDate.ofYearDay(2010, 1),
-                        LocalDate.ofYearDay(2015, 1),
+                        LocalDate.of(2010, Month.SEPTEMBER, 1),
+                        LocalDate.of(2015, Month.JUNE, 1),
                         "Студент",
                         "Староста"
                 ))));
