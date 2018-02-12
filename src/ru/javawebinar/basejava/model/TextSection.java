@@ -3,8 +3,8 @@ package ru.javawebinar.basejava.model;
 public class TextSection extends Section {
     private String text;
 
-    public TextSection() {
-        this.text = null;
+    public TextSection(String text) {
+        this.text = text;
     }
 
     public String getText() {

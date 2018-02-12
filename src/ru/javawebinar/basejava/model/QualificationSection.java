@@ -1,21 +1,22 @@
 package ru.javawebinar.basejava.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class QualificationSection extends Section {
     private List<Qualification> list;
 
-    public QualificationSection() {
-        this.list = new ArrayList<>();
+    public QualificationSection(List<Qualification> list) {
+        this.list = new ArrayList<>(list);
     }
 
     public List<Qualification> getList() {
         return list;
     }
 
-    public void addNewItem() {
-        list.add(new Qualification());
+    public void addNewItem(String title, LocalDate startDate, LocalDate endDate, String header, String text) {
+        list.add(new Qualification(title, startDate, endDate, header, text));
     }
 
     public void removeItem(Qualification qualification) {

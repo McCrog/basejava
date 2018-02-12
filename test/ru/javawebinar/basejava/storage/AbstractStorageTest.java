@@ -5,8 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
@@ -27,6 +29,53 @@ public abstract class AbstractStorageTest {
         RESUME_1 = new Resume(UUID_1, FULLNAME_1);
         RESUME_2 = new Resume(UUID_2, FULLNAME_2);
         RESUME_3 = new Resume(UUID_3, FULLNAME_3);
+
+        RESUME_1.addContacts(ContactsType.PHONE, "77-77-77");
+        RESUME_1.addContacts(ContactsType.EMAIL, "mail@gmail.com");
+
+        RESUME_1.addSections(SectionType.OBJECTIVE, new TextSection("Java"));
+        RESUME_1.addSections(SectionType.PERSONAL, new TextSection("Аналитический склад ума"));
+
+        RESUME_1.addSections(
+                SectionType.ACHIEVEMENT,
+                new ListSection(Arrays.asList("Реализация протоколов", "Налаживание процесса"))
+        );
+
+        RESUME_1.addSections(
+                SectionType.QUALIFICATIONS,
+                new ListSection(Arrays.asList("Git", "Java 8", "Bootstrap.js", "Maven", "Tomcat")))
+        ;
+
+        RESUME_1.addSections(SectionType.EXPERIENCE,
+                new QualificationSection(Arrays.asList(new Qualification(
+                        "Java.ru",
+                        LocalDate.ofYearDay(2015, 1),
+                        LocalDate.ofYearDay(2016, 1),
+                        "Java",
+                        "Проектирование"
+                ), new Qualification(
+                        "Java.ru",
+                        LocalDate.ofYearDay(2016, 1),
+                        LocalDate.ofYearDay(2017, 1),
+                        "Java",
+                        "Разработка"
+                ))));
+
+
+        RESUME_1.addSections(SectionType.EDUCATION,
+                new QualificationSection(Arrays.asList(new Qualification(
+                        "Школа №5",
+                        LocalDate.ofYearDay(2000, 1),
+                        LocalDate.ofYearDay(2010, 1),
+                        "Ученик",
+                        "Отличник"
+                ), new Qualification(
+                        "Московский университет",
+                        LocalDate.ofYearDay(2010, 1),
+                        LocalDate.ofYearDay(2015, 1),
+                        "Студент",
+                        "Староста"
+                ))));
     }
 
     AbstractStorageTest(Storage storage) {
