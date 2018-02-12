@@ -6,8 +6,8 @@ import java.util.List;
 public class ListSection extends Section {
     private final List<String> list;
 
-    public ListSection() {
-        this.list = new ArrayList<>();
+    public ListSection(List<String> list) {
+        this.list = new ArrayList<>(list);
     }
 
     public List<String> getList() {
