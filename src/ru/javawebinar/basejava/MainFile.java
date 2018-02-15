@@ -28,21 +28,17 @@ public class MainFile {
             throw new RuntimeException(e);
         }
 
-        File baseDirectory = new File("./");
+        File baseDirectory = new File("./src/ru/javawebinar/basejava");
 
         recursiveBypass(baseDirectory);
     }
 
     private static void recursiveBypass(File file) {
         for (File childFile : Objects.requireNonNull(file.listFiles())) {
-            if (childFile.isDirectory()) {
-                if (childFile.list() != null) {
-                    for (File name : childFile.listFiles()) {
-                        if (!name.isDirectory()) {
-                            System.out.println(name.getName());
-                        }
-                    }
-                }
+            if (childFile.isFile()) {
+                System.out.println("File: " + childFile.getName());
+            } else if (childFile.isDirectory()) {
+                System.out.println("Directory: " + childFile.getName());
                 recursiveBypass(new File(childFile.getPath()));
             }
         }
