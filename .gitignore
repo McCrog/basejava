@@ -3,5 +3,6 @@ out
 *.iml
 log
 .DS_Store
+file_storage
 
 
