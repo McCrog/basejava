@@ -37,7 +37,7 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected List<Resume> getListStorage() {
+    protected List<Resume> doCopyAll() {
         return new ArrayList<>(storage.values());
     }
 
@@ -52,7 +52,7 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected boolean checkSearchKeyExist(Resume resume) {
+    protected boolean isExist(Resume resume) {
         return resume != null;
     }
 }

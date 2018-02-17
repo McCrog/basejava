@@ -3,9 +3,10 @@ package ru.javawebinar.basejava;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
 
 public class MainFile {
+    private static int counter = 0;
+    
     public static void main(String[] args) {
         File filePath = new File("./.gitignore");
         try {
@@ -34,13 +35,21 @@ public class MainFile {
     }
 
     private static void recursiveBypass(File file) {
-        for (File childFile : Objects.requireNonNull(file.listFiles())) {
-            if (childFile.isFile()) {
-                System.out.println("File: " + childFile.getName());
-            } else if (childFile.isDirectory()) {
-                System.out.println("Directory: " + childFile.getName());
-                recursiveBypass(new File(childFile.getPath()));
+        for (File childFile : file.listFiles()) {
+            print(childFile);
+            if (childFile.isDirectory()) {
+                counter++;
+                recursiveBypass(childFile);
             }
         }
+        counter--;
+    }
+
+    private static void print(File file) {
+        StringBuilder indent = new StringBuilder(" ");
+        for (int i = 0; i < counter; i++) {
+            indent.append(" ");
+        }
+        System.out.println(indent + " " + file.getName());
     }
 }

@@ -34,7 +34,7 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected List<Resume> getListStorage() {
+    protected List<Resume> doCopyAll() {
         return new ArrayList<>(storage.values());
     }
 
@@ -49,7 +49,7 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected boolean checkSearchKeyExist(String uuid) {
+    protected boolean isExist(String uuid) {
         return storage.containsKey(uuid);
     }
 }

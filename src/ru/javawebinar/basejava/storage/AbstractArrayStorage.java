@@ -46,7 +46,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected List<Resume> getListStorage() {
+    protected List<Resume> doCopyAll() {
         return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected boolean checkSearchKeyExist(Integer index) {
+    protected boolean isExist(Integer index) {
         return index >= 0;
     }
 

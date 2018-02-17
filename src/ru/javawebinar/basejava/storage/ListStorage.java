@@ -35,7 +35,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected List<Resume> getListStorage() {
+    protected List<Resume> doCopyAll() {
         return new ArrayList<>(storage);
     }
 
@@ -55,7 +55,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected boolean checkSearchKeyExist(Integer searchKey) {
+    protected boolean isExist(Integer searchKey) {
         return searchKey != -1;
     }
 }
