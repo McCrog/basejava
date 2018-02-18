@@ -2,12 +2,14 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.storage.serialization.StreamStrategy;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -88,25 +90,18 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected boolean isExist(Path path) {
-        return Files.exists(path);
+        if (!Files.isDirectory(path))
+            return Files.exists(path);
+        return false;
     }
 
     @Override
     protected List<Resume> doCopyAll() {
-        List<Path> paths;
+        List<Resume> list;
         try {
-            paths = Files.list(directory).collect(Collectors.toList());
+            list = Files.list(directory).map(this::doGet).collect(Collectors.toList());
         } catch (IOException e) {
             throw new StorageException("Directory read error", null, e);
-        }
-
-        if (paths == null) {
-            throw new StorageException("Directory read error", null);
-        }
-
-        List<Resume> list = new ArrayList<>(size());
-        for (Path path : paths) {
-            list.add(doGet(path));
         }
         return list;
     }
