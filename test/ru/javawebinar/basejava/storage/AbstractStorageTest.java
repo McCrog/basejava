@@ -32,8 +32,8 @@ public abstract class AbstractStorageTest {
         R2 = new Resume(UUID_2, FULLNAME_2);
         R3 = new Resume(UUID_3, FULLNAME_3);
 
-        R1.addContact(ContactsType.EMAIL, "mail1@ya.ru");
-        R1.addContact(ContactsType.PHONE, "11111");
+        R1.addContact(ContactType.EMAIL, "mail1@ya.ru");
+        R1.addContact(ContactType.PHONE, "11111");
         R1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
         R1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
         R1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11", "Achivment12", "Achivment13"));
@@ -49,8 +49,8 @@ public abstract class AbstractStorageTest {
                                 new Organization.Position(1996, Month.JANUARY, 2000, Month.DECEMBER, "aspirant", null),
                                 new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet")),
                         new Organization("Organization12", "http://Organization12.ru")));
-        R2.addContact(ContactsType.SKYPE, "skype2");
-        R2.addContact(ContactsType.PHONE, "22222");
+        R2.addContact(ContactType.SKYPE, "skype2");
+        R2.addContact(ContactType.PHONE, "22222");
         R1.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("Organization2", "http://Organization2.ru",
@@ -78,8 +78,12 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(new Resume(UUID_1, FULLNAME_1));
-        assertGet(R1);
+        Resume newResume = new Resume(UUID_1, "New Name");
+        newResume.addContact(ContactType.EMAIL, "mail1@google.com");
+        newResume.addContact(ContactType.SKYPE, "NewSkype");
+        newResume.addContact(ContactType.MOBILE_PHONE, "+7 921 222-22-22");
+        storage.update(newResume);
+        Assert.assertTrue(newResume.equals(storage.get(UUID_1)));
     }
 
     @Test(expected = NotExistStorageException.class)
