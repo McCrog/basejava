@@ -72,7 +72,7 @@ public class DataStreamSerializer implements StreamSerializer {
             }
             case "ListSection": {
                 ctor = clazz.getConstructor(List.class);
-                String[] dataArray = data.split(",");
+                String[] dataArray = data.substring(data.indexOf("[") + 1, data.indexOf("]")).split(",");
                 return (Section) ctor.newInstance(Arrays.asList(dataArray));
             }
             case "OrganizationSection": {
