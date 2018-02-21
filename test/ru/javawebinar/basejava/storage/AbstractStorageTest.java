@@ -18,19 +18,23 @@ public abstract class AbstractStorageTest {
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
+    private static final String UUID_4 = "uuid4";
 
     private static final String FULLNAME_1 = "name1";
     private static final String FULLNAME_2 = "name2";
     private static final String FULLNAME_3 = "name3";
+    private static final String FULLNAME_4 = "name4";
 
     private static final Resume R1;
     private static final Resume R2;
     private static final Resume R3;
+    private static final Resume R4;
 
     static {
         R1 = new Resume(UUID_1, FULLNAME_1);
         R2 = new Resume(UUID_2, FULLNAME_2);
         R3 = new Resume(UUID_3, FULLNAME_3);
+        R4 = new Resume(UUID_4, FULLNAME_4);
 
         R1.addContact(ContactType.EMAIL, "mail1@ya.ru");
         R1.addContact(ContactType.PHONE, "11111");
@@ -93,23 +97,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void save() {
-        Resume[] resumes = {new Resume("1"),
-                new Resume("-2"),
-                new Resume("Save"),
-                new Resume("Сохранение")
-        };
-
-        storage.save(resumes[0]);
-        storage.save(resumes[1]);
-        storage.save(resumes[2]);
-        storage.save(resumes[3]);
-
-        assertSize(7);
-
-        assertGet(resumes[0]);
-        assertGet(resumes[1]);
-        assertGet(resumes[2]);
-        assertGet(resumes[3]);
+        storage.save(R4);
+        assertSize(4);
+        assertGet(R4);
     }
 
     @Test(expected = ExistStorageException.class)

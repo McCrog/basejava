@@ -1,13 +1,11 @@
 package ru.javawebinar.basejava.storage.serializer;
 
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.*;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +18,27 @@ public class DataStreamSerializer implements StreamSerializer {
             dos.writeUTF(r.getFullName());
             Map<ContactType, String> contacts = r.getContacts();
             dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
+            if (contacts.size() > 0) {
+                for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+                    dos.writeUTF(entry.getKey().name());
+                    dos.writeUTF(entry.getValue());
+                }
             }
-            // TODO implements sections
+
+            // Completed implements sections
+
             Map<SectionType, Section> sections = r.getSections();
             dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue().getClass().getName());
-                dos.writeUTF(entry.getValue().toString());
+
+            if (sections.size() > 0) {
+                writeTextSection(dos, SectionType.OBJECTIVE, (TextSection) r.getSection(SectionType.OBJECTIVE));
+                writeTextSection(dos, SectionType.PERSONAL, (TextSection) r.getSection(SectionType.PERSONAL));
+
+                writeListSection(dos, SectionType.ACHIEVEMENT, (ListSection) r.getSection(SectionType.ACHIEVEMENT));
+                writeListSection(dos, SectionType.QUALIFICATIONS, (ListSection) r.getSection(SectionType.QUALIFICATIONS));
+
+                writeOrganizationSection(dos, SectionType.EXPERIENCE, (OrganizationSection) r.getSection(SectionType.EXPERIENCE));
+                writeOrganizationSection(dos, SectionType.EDUCATION, (OrganizationSection) r.getSection(SectionType.EDUCATION));
             }
         }
     }
@@ -46,56 +54,106 @@ public class DataStreamSerializer implements StreamSerializer {
             for (int i = 0; i < contactsSize; i++) {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-            // TODO implements sections
+            // Completed implements sections
 
             int sectionsSize = dis.readInt();
-            for (int i = 0; i < sectionsSize; i++) {
-                SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                Section section = deserialize(dis.readUTF(), dis.readUTF());
-                resume.addSection(sectionType, section);
+
+            if (sectionsSize > 0) {
+                resume.addSection(readSectionName(dis), readTextSection(dis));
+                resume.addSection(readSectionName(dis), readTextSection(dis));
+
+                resume.addSection(readSectionName(dis), readListSection(dis));
+                resume.addSection(readSectionName(dis), readListSection(dis));
+
+                resume.addSection(readSectionName(dis), readOrganizationSection(dis));
+                resume.addSection(readSectionName(dis), readOrganizationSection(dis));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new StorageException("Data stream read error", e);
         }
         return resume;
     }
 
-    public Section deserialize(String className, String data) throws ClassNotFoundException, IllegalAccessException,
-            InstantiationException, NoSuchMethodException, InvocationTargetException {
-        Class<?> clazz = Class.forName(className);
-        Constructor<?> ctor;
+    private Section readTextSection(DataInputStream dis) throws IOException {
+        return new TextSection(dis.readUTF());
+    }
 
-        switch (clazz.getSimpleName()) {
-            case "TextSetion": {
-                ctor = clazz.getConstructor(String.class);
-                return (Section) ctor.newInstance(data);
-            }
-            case "ListSection": {
-                ctor = clazz.getConstructor(List.class);
-                String[] dataArray = data.substring(data.indexOf("[") + 1, data.indexOf("]")).split(",");
-                return (Section) ctor.newInstance(Arrays.asList(dataArray));
-            }
-            case "OrganizationSection": {
-                ctor = clazz.getConstructor(List.class);
-                String[] linkObject = data.substring(data.indexOf("Link(") + 5, data.indexOf("),[")).split(",");
-                Link link = new Link(linkObject[0], linkObject[1]);
+    private Section readListSection(DataInputStream dis) throws IOException {
+        List<String> list = new ArrayList<>();
 
-                List<Organization.Position> positions = new ArrayList<>();
-                String[] positionObject = data.substring(data.indexOf("Position(") + 9, data.indexOf(")]")).split(",");
-                LocalDate startDate = LocalDate.parse(positionObject[0]);
-                LocalDate endDate = LocalDate.parse(positionObject[1]);
-                String title = positionObject[2];
-                String description = positionObject[3];
-                positions.add(new Organization.Position(startDate, endDate, title, description));
-
-                Organization organization = new Organization(link, positions);
-                List<Organization> organizations = new ArrayList<>();
-                organizations.add(organization);
-
-                return (Section) ctor.newInstance(organizations);
-            }
-            default:
-                return null;
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            list.add(dis.readUTF());
         }
+
+        return new ListSection(list);
+    }
+
+    private Section readOrganizationSection(DataInputStream dis) throws IOException {
+        List<Organization> organizations = new ArrayList<>();
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            String name = dis.readUTF();
+            String url = dis.readUTF();
+
+            Link link = new Link(name, url);
+
+            List<Organization.Position> positions = new ArrayList<>();
+            int positionSize = dis.readInt();
+            for (int j = 0; j < positionSize; j++) {
+                LocalDate startDate = LocalDate.parse(dis.readUTF());
+                LocalDate endDate = LocalDate.parse(dis.readUTF());
+                String title = dis.readUTF();
+                String description = dis.readUTF();
+                positions.add(new Organization.Position(startDate, endDate, title, description));
+            }
+
+            organizations.add(new Organization(link, positions));
+        }
+        return new OrganizationSection(organizations);
+    }
+
+    private void writeTextSection(DataOutputStream dos, SectionType sectionType, TextSection textSection) throws IOException {
+        writeSectionName(dos, sectionType);
+        dos.writeUTF(textSection.getContent());
+    }
+
+    private void writeListSection(DataOutputStream dos, SectionType sectionType, ListSection listSection) throws IOException {
+        writeSectionName(dos, sectionType);
+        List<String> list = listSection.getItems();
+        int size = list.size();
+        dos.writeInt(size);
+        for (String item : list) {
+            dos.writeUTF(item);
+        }
+    }
+
+    private void writeOrganizationSection(DataOutputStream dos, SectionType sectionType, OrganizationSection organizationSection) throws IOException {
+        writeSectionName(dos, sectionType);
+        List<Organization> organizations = organizationSection.getOrganizations();
+        int size = organizations.size();
+        dos.writeInt(size);
+        for (Organization organization : organizations) {
+            Link link = organization.getHomePage();
+            dos.writeUTF(link.getName());
+            dos.writeUTF(link.getUrl());
+
+            List<Organization.Position> positions = organization.getPositions();
+            dos.writeInt(positions.size());
+            for (Organization.Position position : positions) {
+                dos.writeUTF(position.getStartDate().toString());
+                dos.writeUTF(position.getEndDate().toString());
+                dos.writeUTF(position.getTitle());
+                dos.writeUTF(position.getDescription());
+            }
+        }
+    }
+
+    private void writeSectionName(DataOutputStream dos, SectionType sectionType) throws IOException {
+        dos.writeUTF(sectionType.name());
+    }
+
+    private SectionType readSectionName(DataInputStream dis) throws IOException {
+        return SectionType.valueOf(dis.readUTF());
     }
 }
