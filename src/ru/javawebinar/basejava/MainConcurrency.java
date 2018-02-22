@@ -59,6 +59,29 @@ public class MainConcurrency {
         });
         System.out.println(mainConcurrency.counter);
         LazySingleton.getInstance();
+
+        // deadlock
+        Object one = new Object(), two = new Object();
+        Thread t1 = new Thread(() -> {
+            synchronized (one) {
+                Thread.yield();
+                synchronized (two) {
+                    System.out.println("Success!");
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (two) {
+                Thread.yield();
+                synchronized (one) {
+                    System.out.println("Success!");
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
     }
 
     private synchronized void inc() {
