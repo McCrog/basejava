@@ -28,17 +28,30 @@ public class DataStreamSerializer implements StreamSerializer {
             // Completed implements sections
 
             Map<SectionType, Section> sections = r.getSections();
-            dos.writeInt(sections.size());
+            int sectionsSize = sections.size();
+            dos.writeInt(sectionsSize);
 
-            if (sections.size() > 0) {
-                writeTextSection(dos, SectionType.OBJECTIVE, (TextSection) r.getSection(SectionType.OBJECTIVE));
-                writeTextSection(dos, SectionType.PERSONAL, (TextSection) r.getSection(SectionType.PERSONAL));
+            if (sectionsSize > 0) {
+                for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
+                    SectionType sectionType = entry.getKey();
+                    Section section = entry.getValue();
 
-                writeListSection(dos, SectionType.ACHIEVEMENT, (ListSection) r.getSection(SectionType.ACHIEVEMENT));
-                writeListSection(dos, SectionType.QUALIFICATIONS, (ListSection) r.getSection(SectionType.QUALIFICATIONS));
-
-                writeOrganizationSection(dos, SectionType.EXPERIENCE, (OrganizationSection) r.getSection(SectionType.EXPERIENCE));
-                writeOrganizationSection(dos, SectionType.EDUCATION, (OrganizationSection) r.getSection(SectionType.EDUCATION));
+                    dos.writeUTF(sectionType.name());
+                    switch (sectionType) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            dos.writeUTF(((TextSection) section).getContent());
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            writeListSection(dos, (ListSection) section);
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            writeOrganizationSection(dos, (OrganizationSection) section);
+                            break;
+                    }
+                }
             }
         }
     }
@@ -59,14 +72,24 @@ public class DataStreamSerializer implements StreamSerializer {
             int sectionsSize = dis.readInt();
 
             if (sectionsSize > 0) {
-                resume.addSection(readSectionName(dis), readTextSection(dis));
-                resume.addSection(readSectionName(dis), readTextSection(dis));
+                for (int i = 0; i < sectionsSize; i++) {
+                    SectionType sectionType = SectionType.valueOf(dis.readUTF());
 
-                resume.addSection(readSectionName(dis), readListSection(dis));
-                resume.addSection(readSectionName(dis), readListSection(dis));
-
-                resume.addSection(readSectionName(dis), readOrganizationSection(dis));
-                resume.addSection(readSectionName(dis), readOrganizationSection(dis));
+                    switch (sectionType) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            resume.addSection(sectionType, readTextSection(dis));
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            resume.addSection(sectionType, readListSection(dis));
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            resume.addSection(sectionType, readOrganizationSection(dis));
+                            break;
+                    }
+                }
             }
         } catch (Exception e) {
             throw new StorageException("Data stream read error", e);
@@ -113,13 +136,7 @@ public class DataStreamSerializer implements StreamSerializer {
         return new OrganizationSection(organizations);
     }
 
-    private void writeTextSection(DataOutputStream dos, SectionType sectionType, TextSection textSection) throws IOException {
-        writeSectionName(dos, sectionType);
-        dos.writeUTF(textSection.getContent());
-    }
-
-    private void writeListSection(DataOutputStream dos, SectionType sectionType, ListSection listSection) throws IOException {
-        writeSectionName(dos, sectionType);
+    private void writeListSection(DataOutputStream dos, ListSection listSection) throws IOException {
         List<String> list = listSection.getItems();
         int size = list.size();
         dos.writeInt(size);
@@ -128,8 +145,7 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private void writeOrganizationSection(DataOutputStream dos, SectionType sectionType, OrganizationSection organizationSection) throws IOException {
-        writeSectionName(dos, sectionType);
+    private void writeOrganizationSection(DataOutputStream dos, OrganizationSection organizationSection) throws IOException {
         List<Organization> organizations = organizationSection.getOrganizations();
         int size = organizations.size();
         dos.writeInt(size);
@@ -147,13 +163,5 @@ public class DataStreamSerializer implements StreamSerializer {
                 dos.writeUTF(position.getDescription());
             }
         }
-    }
-
-    private void writeSectionName(DataOutputStream dos, SectionType sectionType) throws IOException {
-        dos.writeUTF(sectionType.name());
-    }
-
-    private SectionType readSectionName(DataInputStream dis) throws IOException {
-        return SectionType.valueOf(dis.readUTF());
     }
 }
