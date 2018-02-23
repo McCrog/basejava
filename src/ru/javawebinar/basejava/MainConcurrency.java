@@ -64,8 +64,15 @@ public class MainConcurrency {
         Object one = new Object(), two = new Object();
         Thread t1 = new Thread(() -> {
             synchronized (one) {
-                Thread.yield();
+                System.out.println("Thread t1 locked the object one");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Thread t1 went on");
                 synchronized (two) {
+                    System.out.println("Thread t1 locked the object two");
                     System.out.println("Success!");
                 }
             }
@@ -73,8 +80,15 @@ public class MainConcurrency {
 
         Thread t2 = new Thread(() -> {
             synchronized (two) {
-                Thread.yield();
+                System.out.println("Thread t2 locked the object two");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Thread t2 went on");
                 synchronized (one) {
+                    System.out.println("Thread t2 locked the object one");
                     System.out.println("Success!");
                 }
             }
