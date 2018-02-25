@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainConcurrency {
-    public static final int THREADS_NUMBER = 10000;
+    private static final int THREADS_NUMBER = 10000;
     private int counter;
     private static final Object LOCK = new Object();
 
@@ -78,24 +78,28 @@ public class MainConcurrency {
             }
         });
 
-        Thread t2 = new Thread(() -> {
-            synchronized (two) {
-                System.out.println("Thread t2 locked the object two");
+        final String lock1 = "lock1";
+        final String lock2 = "lock2";
+        deadLock(lock1, lock2);
+        deadLock(lock2, lock1);
+    }
+
+    private static void deadLock(Object lock1, Object lock2) {
+        new Thread(() -> {
+            System.out.println("Waiting " + lock1);
+            synchronized (lock1) {
+                System.out.println("Holding " + lock1);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("Thread t2 went on");
-                synchronized (one) {
-                    System.out.println("Thread t2 locked the object one");
-                    System.out.println("Success!");
+                System.out.println("Waiting " + lock2);
+                synchronized (lock2) {
+                    System.out.println("Holding " + lock2);
                 }
             }
-        });
-
-        t1.start();
-        t2.start();
+        }).start();
     }
 
     private synchronized void inc() {
