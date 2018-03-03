@@ -4,5 +4,6 @@ out
 log
 .DS_Store
 file_storage
-
+lib
+resumes.properties
 
