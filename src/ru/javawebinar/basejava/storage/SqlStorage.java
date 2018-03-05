@@ -15,11 +15,11 @@ public class SqlStorage implements Storage {
 
     private static final String CLEAR_QUERY = "DELETE FROM resume";
     private static final String UPDATE_QUERY = "UPDATE resume SET full_name =? WHERE uuid =?";
-    private static final String SAVE_QUERY = "INSERT INTO resume (uuid, full_name) VALUEs (?,?)";
+    private static final String SAVE_QUERY = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
     private static final String DELETE_QUERY = "DELETE FROM resume WHERE uuid =?";
     private static final String GET_QUERY = "SELECT * FROM resume r WHERE r.uuid =?";
-    private static final String GET_ALL_SORTED_QUERY = "SELECT * FROM resume ORDER BY uuid";
-    private static final String SIZE_QUERY = "SELECT count(*)as RECORDCOUNT FROM resume";
+    private static final String GET_ALL_SORTED_QUERY = "SELECT * FROM resume r ORDER BY full_name,uuid";
+    private static final String SIZE_QUERY = "SELECT count(*) FROM resume";
 
     private SqlHelper sqlHelper;
 
@@ -29,10 +29,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        sqlHelper.execute(CLEAR_QUERY, preparedStatement -> {
-            preparedStatement.execute();
-            return null;
-        });
+        sqlHelper.execute(CLEAR_QUERY);
     }
 
     @Override
@@ -49,10 +46,10 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        sqlHelper.execute(SAVE_QUERY, preparedStatement -> {
+        sqlHelper.<Void>execute(SAVE_QUERY, preparedStatement -> {
             preparedStatement.setString(1, r.getUuid());
             preparedStatement.setString(2, r.getFullName());
-            preparedStatement.executeUpdate();
+            preparedStatement.execute();
             return null;
         });
     }
@@ -96,7 +93,7 @@ public class SqlStorage implements Storage {
     public int size() {
         return sqlHelper.execute(SIZE_QUERY, preparedStatement -> {
             ResultSet resultSet = preparedStatement.executeQuery();
-            return resultSet.next() ? resultSet.getInt("RECORDCOUNT") : 0;
+            return resultSet.next() ? resultSet.getInt(1) : 0;
         });
     }
 }
