@@ -6,6 +6,7 @@ import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.sql.SqlHelper;
 
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +16,18 @@ public class SqlStorage implements Storage {
     private static final String UUID = "uuid";
     private static final String FULL_NAME = "full_name";
 
-    private static final String CLEAR_QUERY = "DELETE FROM resume";
-    private static final String UPDATE_QUERY = "UPDATE resume SET full_name =? WHERE uuid =?";
-    private static final String SAVE_QUERY = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
-    private static final String DELETE_QUERY = "DELETE FROM resume WHERE uuid =?";
+    private static final String CLEAR_QUERY =   "DELETE FROM resume";
+    private static final String UPDATE_QUERY =  "UPDATE resume SET full_name =? WHERE uuid =?";
+    private static final String SAVE_QUERY =    "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
+    private static final String DELETE_QUERY =  "DELETE FROM resume WHERE uuid =?";
     private static final String GET_QUERY = "" +
-                                            " SELECT * FROM resume r " +
-                                            "     LEFT JOIN contact c " +
-                                            "     ON r.uuid = c.resume_uuid " +
-                                            "  WHERE r.uuid =?";
-    private static final String GET_ALL_SORTED_QUERY = "SELECT * FROM resume r ORDER BY full_name,uuid";
-    private static final String SIZE_QUERY = "SELECT count(*) FROM resume";
+                                                " SELECT * FROM resume r " +
+                                                "   LEFT JOIN contact c " +
+                                                "     ON r.uuid = c.resume_uuid " +
+                                                "  WHERE r.uuid =?";
+    private static final String SAVE_CONTACT_QUERY =    "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)";
+    private static final String GET_ALL_SORTED_QUERY =  "SELECT * FROM resume r ORDER BY full_name,uuid";
+    private static final String SIZE_QUERY =            "SELECT count(*) FROM resume";
 
     private SqlHelper sqlHelper;
 
@@ -52,21 +54,24 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        sqlHelper.<Void>execute(SAVE_QUERY, preparedStatement -> {
-            preparedStatement.setString(1, r.getUuid());
-            preparedStatement.setString(2, r.getFullName());
-            preparedStatement.execute();
-            return null;
-        });
-
-        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-            sqlHelper.<Void>execute("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", preparedStatement -> {
-                preparedStatement.setString(1, r.getUuid());
-                preparedStatement.setString(2, e.getKey().name());
-                preparedStatement.setString(3, e.getValue());
-                return null;
-            });
-        }
+        sqlHelper.transactionalExecute(conn -> {
+                    try (PreparedStatement ps = conn.prepareStatement(SAVE_QUERY)) {
+                        ps.setString(1, r.getUuid());
+                        ps.setString(2, r.getFullName());
+                        ps.execute();
+                    }
+                    try (PreparedStatement ps = conn.prepareStatement(SAVE_CONTACT_QUERY)) {
+                        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
+                            ps.setString(1, r.getUuid());
+                            ps.setString(2, e.getKey().name());
+                            ps.setString(3, e.getValue());
+                            ps.addBatch();
+                        }
+                        ps.executeBatch();
+                    }
+                    return null;
+                }
+        );
     }
 
     @Override
