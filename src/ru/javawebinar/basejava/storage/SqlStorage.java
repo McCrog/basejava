@@ -1,6 +1,7 @@
 package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.sql.SqlHelper;
 
@@ -8,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     private static final String UUID = "uuid";
@@ -17,7 +19,11 @@ public class SqlStorage implements Storage {
     private static final String UPDATE_QUERY = "UPDATE resume SET full_name =? WHERE uuid =?";
     private static final String SAVE_QUERY = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
     private static final String DELETE_QUERY = "DELETE FROM resume WHERE uuid =?";
-    private static final String GET_QUERY = "SELECT * FROM resume r WHERE r.uuid =?";
+    private static final String GET_QUERY = "" +
+                                            " SELECT * FROM resume r " +
+                                            "     LEFT JOIN contact c " +
+                                            "     ON r.uuid = c.resume_uuid " +
+                                            "  WHERE r.uuid =?";
     private static final String GET_ALL_SORTED_QUERY = "SELECT * FROM resume r ORDER BY full_name,uuid";
     private static final String SIZE_QUERY = "SELECT count(*) FROM resume";
 
@@ -52,6 +58,15 @@ public class SqlStorage implements Storage {
             preparedStatement.execute();
             return null;
         });
+
+        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
+            sqlHelper.<Void>execute("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", preparedStatement -> {
+                preparedStatement.setString(1, r.getUuid());
+                preparedStatement.setString(2, e.getKey().name());
+                preparedStatement.setString(3, e.getValue());
+                return null;
+            });
+        }
     }
 
     @Override
@@ -62,7 +77,15 @@ public class SqlStorage implements Storage {
             if (!resultSet.next()) {
                 throw new NotExistStorageException(uuid);
             }
-            return new Resume(uuid, resultSet.getString(FULL_NAME));
+            Resume resume = new Resume(uuid, resultSet.getString(FULL_NAME));
+
+            do {
+                String value = resultSet.getString("value");
+                ContactType type = ContactType.valueOf(resultSet.getString("type"));
+                resume.addContact(type, value);
+            } while (resultSet.next());
+
+            return resume;
         });
     }
 
