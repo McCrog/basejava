@@ -6,9 +6,7 @@ import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.sql.SqlHelper;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SqlStorage implements Storage {
     private static final String UUID = "uuid";
@@ -114,13 +112,15 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        List<Resume> resumes = new ArrayList<>();
+        Map<String, Resume> resumes = new LinkedHashMap<>();
 
         sqlHelper.transactionalExecute(conn -> {
                     try (PreparedStatement ps = conn.prepareStatement(GET_ALL_QUERY)) {
                         ResultSet rs = ps.executeQuery();
                         while (rs.next()) {
-                            resumes.add(new Resume(rs.getString(UUID), rs.getString(FULL_NAME)));
+                            String uuid = rs.getString(UUID);
+                            String fullName = rs.getString(FULL_NAME);
+                            resumes.put(uuid, new Resume(uuid, fullName));
                         }
                     }
 
@@ -128,14 +128,14 @@ public class SqlStorage implements Storage {
                         ResultSet rs = ps.executeQuery();
                         while (rs.next()) {
                             String uuid = rs.getString("resume_uuid");
-                            Resume r = getResume(uuid, resumes);
-                            addContact(r, rs);
+                            Resume resume = resumes.get(uuid);
+                            addContact(resume, rs);
                         }
                     }
             return null;
                 }
         );
-        return resumes;
+        return new ArrayList<>(resumes.values());
     }
 
     @Override
@@ -171,14 +171,5 @@ public class SqlStorage implements Storage {
             ps.execute();
             return null;
         });
-    }
-
-    private Resume getResume(String uuid, List<Resume> resumes) {
-        for (Resume r : resumes) {
-            if (uuid.equals(r.getUuid())) {
-                return r;
-            }
-        }
-        return null;
     }
 }
