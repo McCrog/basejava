@@ -6,8 +6,7 @@ import org.junit.Test;
 import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.model.ContactType;
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
 
 import java.io.File;
 import java.util.Arrays;
@@ -42,10 +41,10 @@ public abstract class AbstractStorageTest {
 
         R1.addContact(ContactType.EMAIL, "mail1@ya.ru");
         R1.addContact(ContactType.PHONE, "11111");
-//        R1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
-//        R1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
-//        R1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11", "Achivment12", "Achivment13"));
-//        R1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java", "SQL", "JavaScript"));
+        R1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        R1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
+        R1.addSection(SectionType.ACHIEVEMENT, new ListSection("Achivment11, Achivment11 and Achivment11", "Achivment12, Achivment12", "Achivment13. Achivment13, Achivment13"));
+        R1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java, Java. Java,Java", "SQL", "JavaScript"));
 //        R1.addSection(SectionType.EXPERIENCE,
 //                new OrganizationSection(
 //                        new Organization("Organization11", "http://Organization11.ru",
@@ -59,6 +58,8 @@ public abstract class AbstractStorageTest {
 //                        new Organization("Organization12", "http://Organization12.ru")));
         R2.addContact(ContactType.SKYPE, "skype2");
         R2.addContact(ContactType.PHONE, "22222");
+        R2.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        R2.addSection(SectionType.QUALIFICATIONS, new ListSection("Java, Java. Java,Java", "SQL", "JavaScript"));
 //        R1.addSection(SectionType.EXPERIENCE,
 //                new OrganizationSection(
 //                        new Organization("Organization2", "http://Organization2.ru",
