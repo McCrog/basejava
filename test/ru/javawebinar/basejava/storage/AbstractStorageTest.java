@@ -143,7 +143,7 @@ public abstract class AbstractStorageTest {
         Assert.assertEquals(3, list.size());
         List<Resume> sortedResumes = Arrays.asList(R1, R2, R3);
         Collections.sort(sortedResumes);
-        Assert.assertEquals(list, sortedResumes);
+        Assert.assertEquals(sortedResumes, list);
     }
 
     @Test

@@ -12,13 +12,13 @@ public class SqlStorage implements Storage {
     private static final String UUID = "uuid";
     private static final String FULL_NAME = "full_name";
 
-    private static final String CLEAR_QUERY =   "DELETE FROM resume";
+    private static final String CLEAR_QUERY =  "DELETE FROM resume";
 
-    private static final String UPDATE_QUERY =  "UPDATE resume SET full_name =? WHERE uuid =?";
+    private static final String UPDATE_QUERY = "UPDATE resume SET full_name =? WHERE uuid =?";
 
-    private static final String SAVE_QUERY =    "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
+    private static final String SAVE_QUERY =   "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
 
-    private static final String DELETE_QUERY =  "DELETE FROM resume WHERE uuid =?";
+    private static final String DELETE_QUERY = "DELETE FROM resume WHERE uuid =?";
 
     private static final String SAVE_CONTACT_QUERY = "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?) ";
 
@@ -57,9 +57,9 @@ public class SqlStorage implements Storage {
                         }
                     }
 
-            deleteContact(r);
-            saveContact(r, conn);
-            return null;
+                    deleteContact(r);
+                    saveContact(r, conn);
+                    return null;
                 }
         );
     }
@@ -72,8 +72,8 @@ public class SqlStorage implements Storage {
                         ps.setString(2, r.getFullName());
                         ps.execute();
                     }
-            saveContact(r, conn);
-            return null;
+                    saveContact(r, conn);
+                    return null;
                 }
         );
     }
@@ -112,7 +112,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        Map<String, Resume> resumes = new LinkedHashMap<>();
+        Map<String, Resume> map = new LinkedHashMap<>();
 
         sqlHelper.transactionalExecute(conn -> {
                     try (PreparedStatement ps = conn.prepareStatement(GET_ALL_QUERY)) {
@@ -120,7 +120,7 @@ public class SqlStorage implements Storage {
                         while (rs.next()) {
                             String uuid = rs.getString(UUID);
                             String fullName = rs.getString(FULL_NAME);
-                            resumes.put(uuid, new Resume(uuid, fullName));
+                            map.put(uuid, new Resume(uuid, fullName));
                         }
                     }
 
@@ -128,14 +128,14 @@ public class SqlStorage implements Storage {
                         ResultSet rs = ps.executeQuery();
                         while (rs.next()) {
                             String uuid = rs.getString("resume_uuid");
-                            Resume resume = resumes.get(uuid);
+                            Resume resume = map.get(uuid);
                             addContact(resume, rs);
                         }
                     }
-            return null;
+                    return null;
                 }
         );
-        return new ArrayList<>(resumes.values());
+        return new ArrayList<>(map.values());
     }
 
     @Override
