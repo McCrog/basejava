@@ -27,7 +27,7 @@ public class TestData {
         R3 = new Resume(UUID_3, FULLNAME_3);
         R4 = new Resume(UUID_4, FULLNAME_4);
 
-        init(R1);
+        init(R1, R2, R3);
     }
 
     private static void init(Resume... resumes) {
