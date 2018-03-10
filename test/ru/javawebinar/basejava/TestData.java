@@ -32,7 +32,7 @@ public class TestData {
 
     private static void init(Resume... resumes) {
         for (Resume r : resumes) {
-            r.addContact(ContactType.EMAIL, "mail1@ya.ru");
+            r.addContact(ContactType.MAIL, "mail1@ya.ru");
             r.addContact(ContactType.PHONE, "11111");
 
             r.addContact(ContactType.PHONE, "44444");
