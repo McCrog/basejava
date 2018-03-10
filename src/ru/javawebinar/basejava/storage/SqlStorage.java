@@ -69,10 +69,10 @@ public class SqlStorage implements Storage {
                         }
                     }
 
-                    deleteValue(r, DELETE_CONTACT);
+                    deleteValue(r, conn, DELETE_CONTACT);
                     saveContact(r, conn);
 
-                    deleteValue(r, DELETE_SECTION);
+                    deleteValue(r, conn, DELETE_SECTION);
                     saveSection(r, conn);
                     return null;
                 }
@@ -202,12 +202,11 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void deleteValue(Resume r, String sql) {
-        sqlHelper.execute(sql, ps -> {
-            ps.setString(1, r.getUuid());
-            ps.execute();
-            return null;
-        });
+    private void deleteValue(Resume r, Connection conn, String sql) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, r.getUuid());
+                ps.execute();
+        }
     }
 
     private void saveSection(Resume r, Connection conn) throws SQLException {

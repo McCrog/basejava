@@ -27,9 +27,12 @@ CREATE TABLE section
               CONSTRAINT section_pkey
               PRIMARY KEY,
   resume_uuid CHAR(36) NOT NULL
-              CONSTRAINT section_resume_uuid_fk
+              CONSTRAINT section_resume_uuid_fkey
               REFERENCES resume
               ON DELETE CASCADE,
   type        VARCHAR  NOT NULL,
   value       VARCHAR
 );
+
+CREATE UNIQUE INDEX section_resume_uuid_fkey
+  ON section (resume_uuid, type);
