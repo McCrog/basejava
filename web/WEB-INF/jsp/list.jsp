@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ru.javawebinar.basejava.model.ContactType" %>
+<%@ page import="ru.javawebinar.basejava.util.HtmlUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
@@ -22,7 +23,7 @@
             <jsp:useBean id="resume" type="ru.javawebinar.basejava.model.Resume"/>
             <tr>
                 <td><a href="resume?uuid=${resume.uuid}&action=view">${resume.fullName}</a></td>
-                <td><%=ContactType.MAIL.toHtml(resume.getContact(ContactType.MAIL))%></td>
+                <td><%=HtmlUtil.contactToHtml(ContactType.MAIL, resume.getContact(ContactType.MAIL))%></td>
                 <td><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png" alt="Delete"></a></td>
                 <td><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png" alt="Edit"></a></td>
             </tr>
