@@ -55,8 +55,7 @@ public class TestData {
                     new OrganizationSection(
                             new Organization("Institute", null,
                                     new Organization.Position(1996, Month.JANUARY, 2000, Month.DECEMBER, "aspirant", null),
-                                    new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet")),
-                            new Organization("Organization12", "http://Organization12.ru")));
+                                    new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet"))));
         }
     }
 }

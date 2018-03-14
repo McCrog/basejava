@@ -4,7 +4,7 @@ import ru.javawebinar.basejava.model.ContactType;
 
 public class HtmlUtil {
     public static String contactToHtml(ContactType type, String value) {
-        String summery = "";
+        String summery;
         switch (type) {
             case PHONE:
             case MOBILE:

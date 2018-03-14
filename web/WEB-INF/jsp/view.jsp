@@ -16,16 +16,16 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
+    <!-- Full name -->
     <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png" alt="Edit"></a></h2>
-    <p>
+    <!-- Contact section -->
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.ContactType, java.lang.String>"/>
             <%=HtmlUtil.contactToHtml(contactEntry.getKey(), contactEntry.getValue())%><br/>
         </c:forEach>
-    <p>
     <hr>
-    <p>
+    <!-- Sections -->
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.Section>"/>
@@ -33,24 +33,29 @@
 
             <c:choose>
                 <c:when test="${sectionEntry.getKey() == 'OBJECTIVE'}">
+                    <!-- Objective section -->
                     <h3>${sectionEntry.getValue()}</h3>
                 </c:when>
 
                 <c:when test="${sectionEntry.getKey() == 'PERSONAL'}">
+                    <!-- Personal section -->
                     <p>${sectionEntry.getValue()}</p>
                 </c:when>
 
                 <c:when test="${sectionEntry.getKey() == 'ACHIEVEMENT' || sectionEntry.getKey() == 'QUALIFICATIONS'}">
+                    <!-- List section -->
                     <ul>
-                    <c:forEach var="list" items="<%=((ListSection) sectionEntry.getValue()).getItems()%>">
-                        <li>${list}</li>
+                    <c:forEach var="listItem" items="<%=((ListSection) sectionEntry.getValue()).getItems()%>">
+                        <li>${listItem}</li>
                     </c:forEach>
                     </ul>
                 </c:when>
 
                 <c:when test="${sectionEntry.getKey() == 'EXPERIENCE' || sectionEntry.getKey() == 'EDUCATION'}">
+                    <!-- Organizations section -->
                     <c:forEach var="organization" items="<%=((OrganizationSection) sectionEntry.getValue()).getOrganizations()%>">
 
+                        <!-- Organization title -->
                         <c:choose>
                             <c:when test="${empty organization.homePage.url}">
                                 <h3>${organization.homePage.name}</h3>
@@ -60,6 +65,7 @@
                             </c:otherwise>
                         </c:choose>
 
+                        <!-- Position section -->
                         <table>
                         <c:forEach var="position" items="${organization.positions}">
                             <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
@@ -73,7 +79,6 @@
                 </c:when>
             </c:choose>
         </c:forEach>
-    <p>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
