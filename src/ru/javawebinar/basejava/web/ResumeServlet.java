@@ -84,8 +84,8 @@ public class ResumeServlet extends HttpServlet {
                                 String[] positionTitle = request.getParameterValues(prefix + "_position_title");
                                 String[] description = request.getParameterValues(prefix + "_description");
 
-                                for (int j = 0; j < positionTitle.length; j++) {
-                                    if (positionTitle[j] != null && positionTitle[j].trim().length() != 0) {
+                                if (positionTitle != null) {
+                                    for (int j = 0; j < positionTitle.length; j++) {
                                         positions.add(new Organization.Position(LocalDate.parse(startDate[j]), LocalDate.parse(endDate[j]), positionTitle[j], description[j]));
                                     }
                                 }
