@@ -28,6 +28,10 @@ public class OrganizationSection extends Section {
         return organizations;
     }
 
+    public void addOrganization(Organization organization) {
+        organizations.add(0, organization);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
